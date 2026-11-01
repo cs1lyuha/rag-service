@@ -12,3 +12,14 @@ jobs:
       - run: pytest -q
       - name: Gate de calitate RAG (65 de întrebări)
         run: python -m ragsvc.evaluate
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t rag-service .
+      - name: Imaginea pornește și răspunde
+        run: |
+          docker run -d --name rag -p 8000:8000 -e RAG_API_KEYS=ci -e RAG_ADMIN_KEY=ci-admin rag-service
+          for i in $(seq 1 30); do curl -fsS localhost:8000/health && break; sleep 1; done
+          curl -fsS -X POST localhost:8000/ask -H "x-api-key: ci" -H "content-type: application/json" \
+               -d '{"question": "Cât costă livrarea standard?"}' | grep -q "50 de lei"

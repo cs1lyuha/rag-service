@@ -1,0 +1,24 @@
+# Producție minimă: serviciul + Caddy (HTTPS automat cu Let's Encrypt).
+#   DOMAIN=rag.exemplu.md RAG_ADMIN_KEY=... RAG_API_KEYS=k1,k2 IMAGE_TAG=<sha> docker compose up -d
+services:
+  app:
+    image: ghcr.io/cs1lyuha/rag-service:${IMAGE_TAG:-latest}
+    build: ..
+    environment:
+      RAG_ADMIN_KEY: ${RAG_ADMIN_KEY:?setează RAG_ADMIN_KEY}
+      RAG_API_KEYS: ${RAG_API_KEYS:?setează RAG_API_KEYS}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+  caddy:
+    image: caddy:2
+    ports: ["80:80", "443:443"]
+    environment:
+      DOMAIN: ${DOMAIN:?setează DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [app]
+    restart: unless-stopped
+volumes:
+  caddy_data:

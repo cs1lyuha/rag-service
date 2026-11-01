@@ -1,0 +1,12 @@
+{$DOMAIN} {
+	encode gzip
+	# SSE: fără buffering, ca token-urile să ajungă imediat la client
+	reverse_proxy app:8000 {
+		flush_interval -1
+	}
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+}
