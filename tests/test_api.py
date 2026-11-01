@@ -28,7 +28,7 @@ def test_ask_with_citations(client):
 
 
 def test_ask_abstains_outside_docs(client):
-    r = client.post("/ask", json={"question": "Livrați cu drona pe Lună?"}, headers=U).json()
+    r = client.post("/ask", json={"question": "Vindeți bilete de avion spre Paris?"}, headers=U).json()
     assert r["abstained"] and r["citations"] == []
 
 

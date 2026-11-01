@@ -56,7 +56,7 @@ def _sentences(text: str) -> list[str]:
 
 
 class ExtractiveAnswerer:
-    def __init__(self, threshold: float = 0.45, max_sentences: int = 2) -> None:
+    def __init__(self, threshold: float = 0.3, max_sentences: int = 2) -> None:
         self.threshold = threshold
         self.max_sentences = max_sentences
 
